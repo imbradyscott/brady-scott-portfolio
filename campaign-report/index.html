@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Campaign Report Builder | Brady Scott</title>
+<meta name="description" content="Paste campaign results by channel and get the key metrics, a chart, and a plain-English summary with recommendations.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://bradyscott.vercel.app/campaign-report/">
+<meta property="og:title" content="Campaign Report Builder | Brady Scott">
+<meta property="og:description" content="Turn a spreadsheet of campaign results into a one-page report with metrics, a chart, and recommendations.">
+<meta property="og:image" content="https://bradyscott.vercel.app/img/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+:root {
+  --bg: #f7f6f4; --surface: #ffffff; --ink: #1d1a1c; --muted: #5f5960; --line: #e4dfe0;
+  --garnet: #7a1f33; --garnet-soft: #f3e6e9; --gold: #b8913a; --good: #2f7a4f; --warn: #a45a12;
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "Figtree", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #161314; --surface: #1f1b1d; --ink: #f2eeef; --muted: #b3aaae; --line: #342d30;
+    --garnet: #e0738a; --garnet-soft: #3a2228; --gold: #d8b25e; --good: #6cc392; --warn: #e3a35c; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #161314; --surface: #1f1b1d; --ink: #f2eeef; --muted: #b3aaae; --line: #342d30;
+  --garnet: #e0738a; --garnet-soft: #3a2228; --gold: #d8b25e; --good: #6cc392; --warn: #e3a35c; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: var(--body); font-size: 17px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1000px; margin: 0 auto; }
+a { color: var(--garnet); text-underline-offset: 3px; }
+h1, h2, h3 { font-family: var(--display); line-height: 1.1; margin: 0; text-wrap: balance; }
+p { margin: 0; }
+.label { font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+button:focus-visible, a:focus-visible, textarea:focus-visible, label.file:focus-within { outline: 2px solid var(--garnet); outline-offset: 3px; }
+
+header.top { display: flex; justify-content: space-between; align-items: center; gap: 16px; height: 60px; border-bottom: 1px solid var(--line); }
+.mark { font-family: var(--display); font-weight: 800; font-size: 20px; color: var(--ink); text-decoration: none; }
+.mark span { color: var(--garnet); }
+.back { font-weight: 500; font-size: 15px; text-decoration: none; }
+
+.intro { padding-block: 48px 32px; display: grid; gap: 14px; }
+.intro h1 { font-size: clamp(36px, 6vw, 60px); font-weight: 800; letter-spacing: -.03em; }
+.intro h1 em { font-style: normal; color: var(--garnet); }
+.intro .lede { color: var(--muted); font-size: 19px; max-width: 60ch; }
+
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: clamp(18px, 3vw, 28px); }
+.input-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px; }
+.input-head h2 { font-size: 22px; font-weight: 700; }
+.hint { color: var(--muted); font-size: 15px; margin-bottom: 12px; }
+.hint code { font-family: var(--mono); font-size: 13px; background: var(--garnet-soft); padding: 1px 6px; border-radius: 6px; }
+textarea {
+  width: 100%; min-height: 190px; resize: vertical; padding: 14px; border-radius: 12px;
+  border: 1px solid var(--line); background: var(--bg); color: var(--ink);
+  font-family: var(--mono); font-size: 14px; line-height: 1.5;
+}
+.actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; align-items: center; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 999px;
+  font: 600 15px var(--body); border: 1.5px solid var(--garnet); cursor: pointer; text-decoration: none;
+}
+.btn.solid { background: var(--garnet); color: var(--bg); }
+.btn.ghost { background: transparent; color: var(--garnet); }
+label.file { position: relative; }
+label.file input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.error { color: var(--warn); font-weight: 600; margin-top: 12px; }
+
+#report { margin-block: 32px 48px; display: grid; gap: 24px; }
+#report[hidden] { display: none; }
+.report-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 12px; }
+.report-head h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 700; letter-spacing: -.02em; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; display: grid; gap: 4px; }
+.kpi .v { font-family: var(--display); font-weight: 800; font-size: 30px; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.grid2 { display: grid; grid-template-columns: 1.1fr .9fr; gap: 24px; align-items: start; }
+.grid2 > *, .kpis > *, #report > * { min-width: 0; }
+@media (max-width: 820px) { .grid2 { grid-template-columns: 1fr; } }
+.panel h3 { font-size: 20px; font-weight: 700; margin-bottom: 14px; }
+.table-scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 15px; font-variant-numeric: tabular-nums; }
+th, td { padding: 9px 10px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; }
+th { font-family: var(--mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+tr.total td { font-weight: 700; border-bottom: 0; }
+.pill { display: inline-block; font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 999px; margin-left: 6px; }
+.pill.best { background: color-mix(in srgb, var(--good) 18%, transparent); color: var(--good); }
+.pill.worst { background: color-mix(in srgb, var(--warn) 18%, transparent); color: var(--warn); }
+.chart-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.chart-tabs button { font: 600 13px var(--body); padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg); color: var(--muted); cursor: pointer; }
+.chart-tabs button[aria-pressed="true"] { background: var(--garnet); border-color: var(--garnet); color: var(--bg); }
+.bars { display: grid; gap: 10px; }
+.bar-row { display: grid; grid-template-columns: minmax(80px, 130px) 1fr auto; gap: 10px; align-items: center; font-size: 14px; }
+.bar-row .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bar-track { height: 14px; background: var(--garnet-soft); border-radius: 999px; overflow: hidden; }
+.bar-fill { height: 100%; background: var(--garnet); border-radius: 999px; }
+.bar-row .val { font-variant-numeric: tabular-nums; font-weight: 600; min-width: 64px; text-align: right; }
+.chart-note { font-size: 13px; color: var(--muted); margin-top: 10px; }
+.summary p + p { margin-top: 12px; }
+.recs { margin: 0; padding-left: 20px; display: grid; gap: 10px; }
+.recs li::marker { color: var(--garnet); }
+footer { border-top: 1px solid var(--line); padding-block: 24px 40px; color: var(--muted); font-size: 14px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+.toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 10px 18px; border-radius: 999px; font-weight: 600; font-size: 15px; }
+.toast[hidden] { display: none; }
+
+@media print {
+  body { background: #fff; color: #000; padding: 0; }
+  header.top, .intro, #inputPanel, .no-print, footer { display: none !important; }
+  #report { margin: 0; }
+  .panel, .kpi { break-inside: avoid; border-color: #ccc; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="mark" href="/">Brady Scott<span>.</span></a>
+    <a class="back" href="/#work">← Back to portfolio</a>
+  </header>
+
+  <section class="intro">
+    <p class="label">Tool · Built by Brady Scott</p>
+    <h1>Campaign Report <em>Builder</em></h1>
+    <p class="lede">Paste your campaign results by channel. You get the key metrics, a chart, and a plain-English summary with where to move budget next. It runs entirely in your browser, so your data never leaves your computer.</p>
+  </section>
+
+  <section class="panel" id="inputPanel" aria-labelledby="inputTitle">
+    <div class="input-head">
+      <h2 id="inputTitle">1. Add your results</h2>
+      <button type="button" class="btn ghost" id="sampleBtn">Load sample data</button>
+    </div>
+    <p class="hint">Copy rows straight from Excel or Google Sheets, or upload a CSV. You need a header row with <code>Channel</code>, <code>Spend</code>, <code>Impressions</code>, <code>Clicks</code>, and <code>Conversions</code>. <code>Revenue</code> is optional. Common names like "Cost," "Impr.," or "Leads" work too.</p>
+    <label for="data" class="label" style="display:block;margin-bottom:6px">Campaign data</label>
+    <textarea id="data" spellcheck="false" placeholder="Channel, Spend, Impressions, Clicks, Conversions&#10;Instagram, 500, 42000, 610, 38&#10;Email, 50, 3200, 260, 41"></textarea>
+    <div class="actions">
+      <button type="button" class="btn solid" id="buildBtn">Build report</button>
+      <label class="btn ghost file">Upload CSV<input type="file" id="fileIn" accept=".csv,text/csv,.txt"></label>
+      <button type="button" class="btn ghost" id="clearBtn">Clear</button>
+    </div>
+    <p class="error" id="error" role="alert" hidden></p>
+  </section>
+
+  <section id="report" aria-live="polite" hidden>
+    <div class="report-head">
+      <div>
+        <p class="label" id="reportLabel">Campaign report</p>
+        <h2>2. Your report</h2>
+      </div>
+      <div class="actions no-print" style="margin:0">
+        <button type="button" class="btn ghost" id="copyBtn">Copy summary</button>
+        <button type="button" class="btn solid" id="printBtn">Save as PDF</button>
+      </div>
+    </div>
+
+    <div class="kpis" id="kpis"></div>
+
+    <div class="panel">
+      <h3>By channel</h3>
+      <div class="table-scroll"><table id="table"></table></div>
+    </div>
+
+    <div class="grid2">
+      <div class="panel summary">
+        <h3>Summary</h3>
+        <div id="summary"></div>
+      </div>
+      <div class="panel">
+        <h3>Compare channels</h3>
+        <div class="chart-tabs no-print" role="group" aria-label="Chart metric" id="tabs"></div>
+        <div class="bars" id="bars"></div>
+        <p class="chart-note" id="chartNote"></p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Recommendations</h3>
+      <ol class="recs" id="recs"></ol>
+    </div>
+  </section>
+
+  <footer>
+    <span>Built by Brady Scott · FSU Marketing</span>
+    <a href="/">bradyscott.vercel.app</a>
+  </footer>
+</div>
+<p class="toast" id="toast" role="status" hidden></p>
+
+<script>
+(() => {
+  const SAMPLE = [
+    "Channel,Spend,Impressions,Clicks,Conversions",
+    "Instagram Ads,600,48000,720,36",
+    "TikTok Ads,450,61000,540,19",
+    "Google Search,400,9500,610,44",
+    "Snapchat Ads,250,30000,330,14",
+    "Campus Flyers (QR),120,8000,150,12"
+  ].join("\n");
+
+  const FIELDS = {
+    channel: ["channel", "source", "platform", "campaign", "medium", "ad set", "name"],
+    spend: ["spend", "cost", "amount spent", "budget", "spent", "amount"],
+    impressions: ["impressions", "impr", "impr.", "views", "reach"],
+    clicks: ["clicks", "link clicks", "clicks (all)", "taps"],
+    conversions: ["conversions", "conv", "conv.", "results", "leads", "signups", "sign ups", "sign-ups", "purchases", "registrations"],
+    revenue: ["revenue", "sales", "conversion value", "value", "purchase value"]
+  };
+
+  const $ = id => document.getElementById(id);
+  const dataEl = $("data"), errEl = $("error"), report = $("report");
+  let rows = [], hasRevenue = false, metric = "cpa";
+
+  const money = (n, d = 2) => n == null || !isFinite(n) ? "–" : "$" + n.toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
+  const num = n => n == null || !isFinite(n) ? "–" : Math.round(n).toLocaleString("en-US");
+  const pct = n => n == null || !isFinite(n) ? "–" : (n * 100).toFixed(n < 0.01 ? 2 : 1) + "%";
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+  function parseDelimited(text) {
+    const delim = text.split("\n")[0].includes("\t") ? "\t" : (text.split("\n")[0].includes(";") && !text.split("\n")[0].includes(",") ? ";" : ",");
+    const out = []; let row = [], cell = "", q = false;
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      if (q) {
+        if (c === '"' && text[i + 1] === '"') { cell += '"'; i++; }
+        else if (c === '"') q = false;
+        else cell += c;
+      } else if (c === '"') q = true;
+      else if (c === delim) { row.push(cell); cell = ""; }
+      else if (c === "\n" || c === "\r") {
+        if (c === "\r" && text[i + 1] === "\n") i++;
+        row.push(cell); cell = "";
+        if (row.some(x => x.trim() !== "")) out.push(row);
+        row = [];
+      } else cell += c;
+    }
+    row.push(cell);
+    if (row.some(x => x.trim() !== "")) out.push(row);
+    return out;
+  }
+
+  const toNum = v => {
+    if (v == null) return NaN;
+    const s = String(v).trim().replace(/[$,\s]/g, "").replace(/%$/, "");
+    if (s === "" || s === "-" || s === "–") return 0;
+    return Number(s);
+  };
+
+  function mapHeaders(header) {
+    const norm = header.map(h => h.trim().toLowerCase().replace(/\s+/g, " "));
+    const map = {};
+    for (const [key, names] of Object.entries(FIELDS)) {
+      let idx = norm.findIndex(h => names.includes(h));
+      if (idx < 0) idx = norm.findIndex(h => names.some(n => n.length > 3 && h.includes(n)));
+      if (idx >= 0 && !Object.values(map).includes(idx)) map[key] = idx;
+    }
+    if (map.channel == null) map.channel = 0;
+    return map;
+  }
+
+  function build() {
+    errEl.hidden = true;
+    const text = dataEl.value.trim();
+    if (!text) return fail("Paste some data or load the sample first.");
+    const grid = parseDelimited(text);
+    if (grid.length < 2) return fail("I need a header row plus at least one channel row.");
+    const map = mapHeaders(grid[0]);
+    const missing = ["spend", "impressions", "clicks", "conversions"].filter(k => map[k] == null);
+    if (missing.length) return fail("Couldn't find a column for: " + missing.join(", ") + ". Check your header row.");
+    hasRevenue = map.revenue != null;
+
+    const merged = new Map();
+    const bad = [];
+    grid.slice(1).forEach((r, i) => {
+      const name = (r[map.channel] || "").trim() || "Row " + (i + 2);
+      if (/^(total|grand total|sum)$/i.test(name)) return;
+      const rec = {
+        spend: toNum(r[map.spend]), impressions: toNum(r[map.impressions]),
+        clicks: toNum(r[map.clicks]), conversions: toNum(r[map.conversions]),
+        revenue: hasRevenue ? toNum(r[map.revenue]) : 0
+      };
+      if (Object.values(rec).some(v => !isFinite(v) || v < 0)) { bad.push(i + 2); return; }
+      const prev = merged.get(name);
+      if (prev) for (const k in rec) prev[k] += rec[k];
+      else merged.set(name, { name, ...rec });
+    });
+    if (bad.length) return fail("Row " + bad.slice(0, 3).join(", ") + (bad.length > 3 ? "…" : "") + " has a value that isn't a number. Fix it and try again.");
+    rows = [...merged.values()];
+    if (!rows.length) return fail("No channel rows found under the header.");
+
+    rows.forEach(r => {
+      r.ctr = r.impressions ? r.clicks / r.impressions : null;
+      r.cpc = r.clicks ? r.spend / r.clicks : null;
+      r.cvr = r.clicks ? r.conversions / r.clicks : null;
+      r.cpa = r.conversions ? r.spend / r.conversions : null;
+      r.roas = hasRevenue && r.spend ? r.revenue / r.spend : null;
+      r.cpm = r.impressions ? r.spend / r.impressions * 1000 : null;
+    });
+    render();
+  }
+
+  function fail(msg) { errEl.textContent = msg; errEl.hidden = false; report.hidden = true; return false; }
+
+  function totals() {
+    const t = rows.reduce((a, r) => { for (const k of ["spend", "impressions", "clicks", "conversions", "revenue"]) a[k] += r[k]; return a; },
+      { spend: 0, impressions: 0, clicks: 0, conversions: 0, revenue: 0 });
+    t.ctr = t.impressions ? t.clicks / t.impressions : null;
+    t.cpc = t.clicks ? t.spend / t.clicks : null;
+    t.cvr = t.clicks ? t.conversions / t.clicks : null;
+    t.cpa = t.conversions ? t.spend / t.conversions : null;
+    t.roas = hasRevenue && t.spend ? t.revenue / t.spend : null;
+    return t;
+  }
+
+  // Channels with too few conversions give noisy cost-per-conversion numbers.
+  const MIN_CONV = 10;
+  const ranked = () => rows.filter(r => r.cpa != null && r.conversions >= MIN_CONV && r.spend > 0).sort((a, b) => a.cpa - b.cpa);
+
+  function render() {
+    const t = totals();
+    const rk = ranked();
+    const best = rk[0], worst = rk.length > 1 ? rk[rk.length - 1] : null;
+
+    $("reportLabel").textContent = `Campaign report · ${rows.length} channel${rows.length === 1 ? "" : "s"}`;
+    const kpis = [
+      ["Total spend", money(t.spend, 0)],
+      ["Conversions", num(t.conversions)],
+      ["Cost per conversion", money(t.cpa)],
+      ["Click-through rate", pct(t.ctr)],
+      ["Conversion rate", pct(t.cvr)]
+    ];
+    if (hasRevenue) kpis.push(["Return on ad spend", t.roas == null ? "–" : t.roas.toFixed(2) + "x"]);
+    $("kpis").innerHTML = kpis.map(([l, v]) => `<div class="kpi"><span class="label">${l}</span><span class="v">${v}</span></div>`).join("");
+
+    const cols = [["Channel"], ["Spend"], ["Conv."], ["CTR"], ["Conv. rate"], ["CPC"], ["Cost / conv."]];
+    if (hasRevenue) cols.push(["ROAS"]);
+    const sorted = [...rows].sort((a, b) => (a.cpa ?? Infinity) - (b.cpa ?? Infinity));
+    const tr = r => {
+      const tag = best && r === best ? '<span class="pill best">Best</span>' : worst && r === worst ? '<span class="pill worst">Costliest</span>' : "";
+      return `<tr><td>${esc(r.name)}${tag}</td><td>${money(r.spend, 0)}</td><td>${num(r.conversions)}</td><td>${pct(r.ctr)}</td><td>${pct(r.cvr)}</td><td>${money(r.cpc)}</td><td>${money(r.cpa)}</td>${hasRevenue ? `<td>${r.roas == null ? "–" : r.roas.toFixed(2) + "x"}</td>` : ""}</tr>`;
+    };
+    $("table").innerHTML = `<thead><tr>${cols.map(c => `<th scope="col">${c[0]}</th>`).join("")}</tr></thead><tbody>${sorted.map(tr).join("")}<tr class="total"><td>Total</td><td>${money(t.spend, 0)}</td><td>${num(t.conversions)}</td><td>${pct(t.ctr)}</td><td>${pct(t.cvr)}</td><td>${money(t.cpc)}</td><td>${money(t.cpa)}</td>${hasRevenue ? `<td>${t.roas == null ? "–" : t.roas.toFixed(2) + "x"}</td>` : ""}</tr></tbody>`;
+
+    const tabs = [["cpa", "Cost / conv."], ["conversions", "Conversions"], ["ctr", "CTR"], ["cvr", "Conv. rate"]];
+    if (hasRevenue) tabs.push(["roas", "ROAS"]);
+    if (!tabs.some(x => x[0] === metric)) metric = "cpa";
+    $("tabs").innerHTML = tabs.map(([k, l]) => `<button type="button" data-m="${k}" aria-pressed="${k === metric}">${l}</button>`).join("");
+    drawBars();
+
+    writeSummary(t, rk, best, worst);
+    report.hidden = false;
+    report.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+  }
+
+  function drawBars() {
+    const fmt = { cpa: v => money(v), conversions: num, ctr: pct, cvr: pct, roas: v => v.toFixed(2) + "x" }[metric];
+    const lowerBetter = metric === "cpa";
+    const list = rows.filter(r => r[metric] != null).sort((a, b) => lowerBetter ? a[metric] - b[metric] : b[metric] - a[metric]);
+    const max = Math.max(...list.map(r => r[metric]), 0) || 1;
+    $("bars").innerHTML = list.map(r => `<div class="bar-row"><span class="name" title="${esc(r.name)}">${esc(r.name)}</span><span class="bar-track"><span class="bar-fill" style="display:block;width:${Math.max(2, r[metric] / max * 100)}%"></span></span><span class="val">${fmt(r[metric])}</span></div>`).join("") || "<p class='hint'>Not enough data for this metric.</p>";
+    $("chartNote").textContent = lowerBetter ? "Shorter is better: less spent for each conversion." : "Longer is better.";
+    document.querySelectorAll("#tabs button").forEach(b => b.setAttribute("aria-pressed", b.dataset.m === metric));
+  }
+
+  let summaryText = "";
+  function writeSummary(t, rk, best, worst) {
+    const paras = [];
+    paras.push(`Across ${rows.length} channel${rows.length === 1 ? "" : "s"}, the campaign spent ${money(t.spend, 0)} and drove ${num(t.conversions)} conversions, an average of ${money(t.cpa)} per conversion. ${num(t.clicks)} of ${num(t.impressions)} impressions turned into clicks (${pct(t.ctr)}), and ${pct(t.cvr)} of clicks converted.`);
+    if (best && worst && worst !== best) {
+      const ratio = worst.cpa / best.cpa;
+      paras.push(`${best.name} was the most efficient channel at ${money(best.cpa)} per conversion. ${worst.name} was the costliest at ${money(worst.cpa)}${ratio >= 1.5 ? `, about ${ratio.toFixed(1)}x as much` : ""}.`);
+    } else if (best) {
+      paras.push(`${best.name} delivered conversions at ${money(best.cpa)} each.`);
+    }
+    const share = rows.filter(r => r.spend > 0).sort((a, b) => b.spend - a.spend)[0];
+    if (share && t.spend) {
+      const sp = share.spend / t.spend, cp = t.conversions ? share.conversions / t.conversions : 0;
+      paras.push(`${share.name} took the biggest share of budget (${pct(sp)}) and produced ${pct(cp)} of conversions${cp < sp * 0.75 ? ", so it's getting more money than its results justify" : cp > sp * 1.25 ? ", more than its share of spend" : ""}.`);
+    }
+    $("summary").innerHTML = paras.map(p => `<p>${esc(p)}</p>`).join("");
+
+    const recs = [];
+    if (best && worst && worst !== best && worst.cpa / best.cpa >= 1.3) {
+      const move = Math.round(worst.spend * 0.25 / 10) * 10 || Math.round(worst.spend * 0.25);
+      const extra = move / best.cpa;
+      const net = Math.max(1, Math.round(extra - move / worst.cpa));
+      recs.push(`Test moving about ${money(move, 0)} (25%) from ${worst.name} to ${best.name}. If ${best.name} held its current cost per conversion, that would add about ${net} net conversion${net === 1 ? "" : "s"}. Costs usually rise as a channel scales, so treat that as a ceiling and re-check after a week.`);
+    }
+    const ctrs = rows.filter(r => r.ctr != null && r.impressions >= 1000);
+    if (ctrs.length > 1) {
+      const avg = t.ctr, low = ctrs.sort((a, b) => a.ctr - b.ctr)[0];
+      if (low.ctr < avg * 0.6) recs.push(`${low.name} has the weakest click-through rate (${pct(low.ctr)} vs. ${pct(avg)} overall). People see it but don't click, so test new creative or a sharper hook before cutting it.`);
+    }
+    const cvrs = rows.filter(r => r.cvr != null && r.clicks >= 100);
+    if (cvrs.length > 1) {
+      const low = cvrs.sort((a, b) => a.cvr - b.cvr)[0];
+      if (low.cvr < t.cvr * 0.6) recs.push(`${low.name} gets clicks but few conversions (${pct(low.cvr)} vs. ${pct(t.cvr)} overall). Check that the landing page matches what the ad promised.`);
+    }
+    const thin = rows.filter(r => r.conversions < MIN_CONV);
+    if (thin.length) recs.push(`${thin.map(r => r.name).join(", ")} ${thin.length === 1 ? "has" : "have"} fewer than ${MIN_CONV} conversions, so ${thin.length === 1 ? "its" : "their"} cost per conversion isn't reliable yet. Let ${thin.length === 1 ? "it" : "them"} run longer before deciding.`);
+    if (hasRevenue && t.roas != null) recs.push(t.roas >= 1 ? `Overall return on ad spend is ${t.roas.toFixed(2)}x, so every $1 brought back ${money(t.roas)}. Prioritize channels above that line.` : `Overall return on ad spend is ${t.roas.toFixed(2)}x, below break-even. Pause or rework channels under 1x first.`);
+    if (!recs.length) recs.push("Channels are performing within a similar range. Keep the current split and test one new creative per channel.");
+    $("recs").innerHTML = recs.map(r => `<li>${esc(r)}</li>`).join("");
+
+    summaryText = "Campaign summary\n\n" + paras.join("\n\n") + "\n\nRecommendations\n" + recs.map((r, i) => `${i + 1}. ${r}`).join("\n");
+  }
+
+  function toast(msg) { const el = $("toast"); el.textContent = msg; el.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => el.hidden = true, 2200); }
+
+  $("sampleBtn").addEventListener("click", () => { dataEl.value = SAMPLE; build(); toast("Loaded sample data (made-up numbers)"); });
+  $("buildBtn").addEventListener("click", build);
+  $("clearBtn").addEventListener("click", () => { dataEl.value = ""; report.hidden = true; errEl.hidden = true; dataEl.focus(); });
+  $("fileIn").addEventListener("change", e => {
+    const f = e.target.files[0]; if (!f) return;
+    const rd = new FileReader();
+    rd.onload = () => { dataEl.value = String(rd.result).replace(/^﻿/, ""); build(); };
+    rd.readAsText(f); e.target.value = "";
+  });
+  $("tabs").addEventListener("click", e => { const b = e.target.closest("button"); if (b) { metric = b.dataset.m; drawBars(); } });
+  $("printBtn").addEventListener("click", () => window.print());
+  $("copyBtn").addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText(summaryText); toast("Summary copied"); }
+    catch { toast("Couldn't copy. Select the text and copy it instead."); }
+  });
+})();
+</script>
+</body>
+</html>
