@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Brady Scott Portfolio</title>
+<meta name="description" content="Brady Scott, marketing student at Florida State University. Campaigns, content, and brand work.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: one centered 1080px column; hero split photo/intro; work as alternating image + case rows; garnet accent pulled from FSU colors. */
+:root {
+  --bg: #f7f6f4;
+  --surface: #ffffff;
+  --ink: #1d1a1c;
+  --muted: #5f5960;
+  --line: #e4dfe0;
+  --garnet: #7a1f33;
+  --garnet-soft: #f3e6e9;
+  --gold: #b8913a;
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "Figtree", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #161314; --surface: #1f1b1d; --ink: #f2eeef; --muted: #b3aaae; --line: #342d30;
+    --garnet: #e0738a; --garnet-soft: #3a2228; --gold: #d8b25e; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #161314; --surface: #1f1b1d; --ink: #f2eeef; --muted: #b3aaae; --line: #342d30;
+  --garnet: #e0738a; --garnet-soft: #3a2228; --gold: #d8b25e; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--body); font-size: 17px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap { max-width: 1080px; margin: 0 auto; }
+a { color: var(--garnet); text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--garnet); outline-offset: 3px; border-radius: 4px; }
+h1, h2, h3 { font-family: var(--display); line-height: 1.1; text-wrap: balance; margin: 0; }
+p { margin: 0; }
+.label { font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+
+/* Header */
+header.top {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(8px); border-bottom: 1px solid var(--line);
+  margin-left: calc(-1 * max(16px, env(safe-area-inset-left, 0px)));
+  margin-right: calc(-1 * max(16px, env(safe-area-inset-right, 0px)));
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+header.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 60px; }
+.mark { font-family: var(--display); font-weight: 800; font-size: 20px; color: var(--ink); text-decoration: none; letter-spacing: -.01em; }
+.mark span { color: var(--garnet); }
+nav { display: flex; gap: 22px; }
+nav a { color: var(--muted); text-decoration: none; font-weight: 500; font-size: 15px; }
+nav a:hover { color: var(--ink); }
+@media (max-width: 640px) { nav a.opt { display: none; } nav { gap: 16px; } }
+
+/* Hero */
+.hero { display: grid; grid-template-columns: 300px 1fr; gap: 56px; align-items: center; padding-block: 72px 56px; }
+.portrait { position: relative; width: 100%; max-width: 300px; }
+.portrait img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 50% 50% 18px 50%; }
+.portrait::after {
+  content: ""; position: absolute; right: -10px; bottom: -10px; width: 64px; height: 64px;
+  border-radius: 50%; background: var(--gold); z-index: -1;
+}
+.hero h1 { font-size: clamp(44px, 7vw, 76px); font-weight: 800; letter-spacing: -.03em; }
+.hero h1 em { font-style: normal; color: var(--garnet); }
+.hero .lede { margin-top: 18px; font-size: 20px; color: var(--muted); max-width: 34ch; }
+.facts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+.chip { font-size: 14px; font-weight: 500; padding: 6px 12px; border-radius: 999px; background: var(--garnet-soft); color: var(--ink); }
+.cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 999px; font-weight: 600; font-size: 15px; text-decoration: none; border: 1.5px solid var(--garnet); cursor: pointer; font-family: var(--body); }
+.btn.solid { background: var(--garnet); color: var(--bg); }
+.btn.ghost { background: transparent; color: var(--garnet); }
+@media (max-width: 760px) {
+  .hero { grid-template-columns: 1fr; gap: 32px; padding-block: 40px 32px; }
+  .portrait { max-width: 200px; }
+}
+
+/* Sections */
+section.block { padding-block: 56px; border-top: 1px solid var(--line); }
+.sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 36px; }
+.sec-head h2 { font-size: clamp(30px, 4.4vw, 44px); font-weight: 700; letter-spacing: -.02em; }
+.sec-head p { color: var(--muted); max-width: 46ch; }
+
+/* Case studies */
+.cases { display: grid; gap: 64px; }
+.case { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+.case:nth-of-type(even) .case-media { order: 2; }
+.gallery { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; margin: -24px 0 0; }
+.gallery button { padding: 0; border: 0; background: none; cursor: zoom-in; display: block; min-width: 0; }
+.gallery img { display: block; width: 100%; height: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 12px; }
+.gallery .lead { grid-row: span 2; }
+.gallery .wide { grid-column: 2 / span 2; }
+.gallery figcaption { grid-column: 1 / -1; font-size: 14px; color: var(--muted); }
+@media (max-width: 760px) {
+  .gallery { grid-template-columns: 1fr 1fr; margin-top: -8px; }
+  .gallery .lead, .gallery .wide { grid-column: 1 / -1; grid-row: auto; }
+}
+.case-media { min-width: 0; }
+.case-media button { display: block; width: 100%; padding: 0; border: 0; background: none; cursor: zoom-in; }
+.case-media img { display: block; width: 100%; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); }
+.case-media.tall img { max-height: 560px; object-fit: contain; object-position: center top; }
+.case-body { min-width: 0; display: grid; gap: 14px; }
+.case-body h3 { font-size: clamp(26px, 3.4vw, 34px); font-weight: 700; letter-spacing: -.02em; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 16px; }
+.case-body ul { margin: 0; padding-left: 20px; display: grid; gap: 8px; }
+.case-body li::marker { color: var(--garnet); }
+.result { border-left: 3px solid var(--gold); padding: 4px 0 4px 14px; font-weight: 600; }
+.credit { font-size: 14px; color: var(--muted); }
+.text-card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 36px; display: grid; gap: 10px; }
+.text-card .big { font-family: var(--display); font-weight: 800; font-size: clamp(56px, 9vw, 96px); line-height: 1; color: var(--garnet); letter-spacing: -.04em; }
+@media (max-width: 760px) {
+  .case { grid-template-columns: 1fr; gap: 24px; }
+  .case:nth-of-type(even) .case-media { order: 0; }
+}
+
+/* More projects */
+.more { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; margin-top: 56px; }
+.more article { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 24px; display: grid; gap: 8px; align-content: start; }
+.more h3 { font-size: 21px; font-weight: 700; }
+.more p { color: var(--muted); font-size: 16px; }
+@media (max-width: 640px) { .more { grid-template-columns: 1fr; } }
+
+/* Experience */
+.exp { display: grid; }
+.exp-row { display: grid; grid-template-columns: 180px 1fr; gap: 24px; padding-block: 22px; border-bottom: 1px solid var(--line); }
+.exp-row:first-child { padding-top: 0; }
+.exp-row h3 { font-size: 20px; font-weight: 700; }
+.exp-row .org { color: var(--muted); font-weight: 500; margin-top: 2px; }
+.exp-row p.desc { margin-top: 8px; }
+.when { font-family: var(--mono); font-size: 13px; color: var(--muted); padding-top: 4px; font-variant-numeric: tabular-nums; }
+@media (max-width: 640px) { .exp-row { grid-template-columns: 1fr; gap: 6px; } }
+
+/* Certifications */
+.certs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.cert { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: grid; }
+.cert button { padding: 0; border: 0; background: #fff; cursor: zoom-in; display: block; }
+.cert img { display: block; width: 100%; aspect-ratio: 1124 / 871; object-fit: contain; }
+.cert-info { padding: 18px 20px; display: grid; gap: 4px; border-top: 1px solid var(--line); }
+.cert-info h3 { font-size: 18px; font-weight: 700; }
+.cert-info p { color: var(--muted); font-size: 15px; }
+@media (max-width: 640px) { .certs { grid-template-columns: 1fr; } }
+
+/* Skills */
+.skills { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; }
+.skills h3 { font-size: 18px; font-weight: 700; margin-bottom: 12px; }
+.tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag { font-size: 15px; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); }
+@media (max-width: 640px) { .skills { grid-template-columns: 1fr; } }
+
+/* About */
+.about { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+.about p + p { margin-top: 14px; }
+.about .col { min-width: 0; }
+@media (max-width: 760px) { .about { grid-template-columns: 1fr; gap: 20px; } }
+
+/* Contact */
+.contact { background: var(--garnet); color: var(--bg); border-radius: 22px; padding: clamp(28px, 6vw, 64px); display: grid; gap: 22px; margin-block: 56px 32px; }
+.contact h2 { font-size: clamp(32px, 5vw, 54px); font-weight: 800; letter-spacing: -.03em; color: var(--bg); }
+.contact p { max-width: 50ch; opacity: .9; }
+.contact-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.email { font-family: var(--mono); font-size: 16px; background: color-mix(in srgb, var(--bg) 16%, transparent); padding: 10px 14px; border-radius: 10px; user-select: all; }
+.contact .btn { border-color: var(--bg); }
+.contact .btn.solid { background: var(--bg); color: var(--garnet); }
+.contact .btn.ghost { color: var(--bg); }
+footer { padding-block: 0 40px; color: var(--muted); font-size: 14px; }
+
+/* Lightbox */
+.lb { position: fixed; inset: 0; z-index: 50; background: rgba(12, 10, 11, .86); display: grid; place-items: center;
+  padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+.lb[hidden] { display: none; }
+.lb img { max-width: 100%; max-height: 88vh; border-radius: 10px; background: #fff; }
+.lb .close { position: absolute; top: calc(14px + env(safe-area-inset-top, 0px)); right: calc(14px + env(safe-area-inset-right, 0px)); background: #fff; color: #1d1a1c; border: 0; border-radius: 999px; padding: 8px 16px; font: 600 15px var(--body); cursor: pointer; }
+</style>
+
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="mark" href="#top">Brady Scott<span>.</span></a>
+    <nav aria-label="Sections">
+      <a href="#work">Work</a>
+      <a class="opt" href="#experience">Experience</a>
+      <a class="opt" href="#certifications">Certifications</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap" id="top">
+  <section class="hero">
+    <div class="portrait"><img src="img/headshot.jpg" alt="Brady Scott"></div>
+    <div>
+      <p class="label">Marketing · Florida State University</p>
+      <h1 style="margin-top:12px">Hi, I'm Brady. I turn complex products into <em>messages people get.</em></h1>
+      <p class="lede">I'm a marketing student at FSU focused on product marketing: positioning, messaging, and campaigns. I've done it for a VR research project and for a company of my own.</p>
+      <div class="facts">
+        <span class="chip">B.S. Marketing, expected May 2028</span>
+        <span class="chip">3.94 GPA</span>
+        <span class="chip">Pi Sigma Epsilon</span>
+        <span class="chip">FSU Innovation Hub</span>
+      </div>
+      <div class="cta">
+        <a class="btn solid" href="#work">See my work</a>
+        <a class="btn ghost" href="https://www.linkedin.com/in/bradyscott-fsu" target="_blank" rel="noopener">LinkedIn ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="work">
+    <div class="sec-head">
+      <h2>Selected work</h2>
+      <p>Real projects, what I did on each, and what came out of it.</p>
+    </div>
+
+    <div class="cases">
+      <article class="case">
+        <div class="case-media tall">
+          <button type="button" data-full="img/vr-flyer.jpg" data-alt="Recruitment flyer for the Multisensory Music VR project" aria-label="View the recruitment flyer full size">
+            <img src="img/vr-flyer.jpg" alt="Recruitment flyer for the Multisensory Music VR project at FSU's Innovation Hub" loading="lazy">
+          </button>
+        </div>
+        <div class="case-body">
+          <div class="meta"><span class="label">Recruitment campaign</span><span class="label">FSU Innovation Hub · 2026</span></div>
+          <h3>Multisensory Music VR</h3>
+          <p>An interdisciplinary project building a virtual reality system that lets autistic participants experience music through multiple senses. The team needed students with music, 3D animation, programming, and VR skills. My job was to find them.</p>
+          <ul>
+            <li>Designed the recruitment flyer and showcase materials, refining them with the project lead's feedback.</li>
+            <li>Turned technical project details into clear, student-friendly messaging.</li>
+            <li>Ran targeted outreach and guided interested students through next steps.</li>
+            <li>Filmed project content showing the VR experience for promotional channels.</li>
+          </ul>
+          <p class="result">Result: more than doubled the project team.</p>
+          <p class="credit">Project led by Kent Godfrey.</p>
+        </div>
+      </article>
+
+      <figure class="gallery">
+        <button type="button" class="lead" data-full="img/vr-team-work.jpg" data-alt="Brady working with the VR project team" aria-label="View photo full size"><img src="img/vr-team-work.jpg" alt="Brady, in a cap, working at a computer with the VR project team" loading="lazy"></button>
+        <button type="button" data-full="img/vr-team-kent.jpg" data-alt="Brady and Kent Godfrey at a project meeting" aria-label="View photo full size"><img src="img/vr-team-kent.jpg" alt="Brady and Kent Godfrey at a project meeting" loading="lazy"></button>
+        <button type="button" data-full="img/vr-team-meeting.jpg" data-alt="The VR project team meeting at the FSU Innovation Hub" aria-label="View photo full size"><img src="img/vr-team-meeting.jpg" alt="The VR project team meeting at the FSU Innovation Hub" loading="lazy"></button>
+        <button type="button" class="wide" data-full="img/vr-team-wide.jpg" data-alt="The VR project team at work" aria-label="View photo full size"><img src="img/vr-team-wide.jpg" alt="The VR project team at work" loading="lazy"></button>
+        <figcaption>Me (in the hat) with Kent Godfrey and the project team at a weekly meeting in the FSU Innovation Hub.</figcaption>
+      </figure>
+
+      <article class="case">
+        <div class="case-media">
+          <button type="button" data-full="img/kindly-replied.jpg" data-alt="Kindly Replied homepage" aria-label="View the Kindly Replied homepage screenshot full size">
+            <img src="img/kindly-replied.jpg" alt="Kindly Replied homepage: Every Google review answered. None of the extra work." loading="lazy">
+          </button>
+        </div>
+        <div class="case-body">
+          <div class="meta"><span class="label">Founder</span><span class="label">2026</span></div>
+          <h3>Kindly Replied</h3>
+          <p>A Google review response service for U.S. dental offices. Most offices stop replying to reviews because a friendly reply can accidentally confirm someone is a patient. Kindly Replied writes warm replies that are screened for that, and answers every review within 24 hours.</p>
+          <ul>
+            <li>Built the brand: name, positioning, voice, and the "Every review, kindly replied" message.</li>
+            <li>Built the website, pricing, free review audit, and free tools that bring offices in.</li>
+            <li>Set up AI-assisted reply drafting behind the service.</li>
+          </ul>
+          <p><a href="https://www.kindlyreplied.com" target="_blank" rel="noopener">Visit kindlyreplied.com ↗</a></p>
+        </div>
+      </article>
+
+    </div>
+
+    <div class="more">
+      <article>
+        <span class="label">Academic project · 2026</span>
+        <h3>Top't Corn brand &amp; sales strategy</h3>
+        <p>Built a brand and sales strategy covering positioning, pricing, and distribution. Analyzed monthly sales data in Excel to find the top products and locations and recommend where to focus.</p>
+      </article>
+      <article>
+        <span class="label">AP Capstone research · 2024–2025</span>
+        <h3>How students use generative AI</h3>
+        <p>Designed a mixed-methods study of about 100 students, analyzed the survey and written responses, and presented the findings to an academic panel.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="block" id="experience">
+    <div class="sec-head"><h2>Experience</h2></div>
+    <div class="exp">
+      <div class="exp-row">
+        <span class="when">Sep 2026 – Now</span>
+        <div>
+          <h3>Marketing Team Member</h3>
+          <p class="org">Student Innovators, FSU Innovation Hub</p>
+          <p class="desc">Recruitment, campaigns, flyers, and video for student-led innovation projects.</p>
+        </div>
+      </div>
+      <div class="exp-row">
+        <span class="when">Sep 2026 – Now</span>
+        <div>
+          <h3>Member</h3>
+          <p class="org">Pi Sigma Epsilon, Delta Lambda Chapter</p>
+          <p class="desc">Professional development training, chapter activities, and employer presentations on marketing and sales.</p>
+        </div>
+      </div>
+      <div class="exp-row">
+        <span class="when">2026</span>
+        <div>
+          <h3>Cimarron Mascot Performer</h3>
+          <p class="org">FSU Athletics</p>
+          <p class="desc">Represented FSU's brand at games and public events, adapting to every kind of crowd while keeping the character consistent.</p>
+        </div>
+      </div>
+      <div class="exp-row">
+        <span class="when">Apr – Aug 2024</span>
+        <div>
+          <h3>Dine-In Host</h3>
+          <p class="org">Steak 'n Shake · Tampa, FL</p>
+          <p class="desc">Kept guests moving during busy shifts, handled customer concerns, and coordinated with the kitchen and service teams.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="certifications">
+    <div class="sec-head">
+      <h2>Certifications</h2>
+      <p>Making content people care about, and measuring what's actually working.</p>
+    </div>
+    <div class="certs">
+      <article class="cert">
+        <button type="button" data-full="img/cert-google-analytics.jpg" data-alt="Google Analytics Certification for Brady Scott" aria-label="View the Google Analytics certificate full size">
+          <img src="img/cert-google-analytics.jpg" alt="Google Analytics Certification awarded to Brady Scott" loading="lazy">
+        </button>
+        <div class="cert-info">
+          <h3>Google Analytics Certification</h3>
+          <p>Google · Oct 2026 – Oct 2027</p>
+          <a href="https://skillshop.credential.net/4c2f1b02-0fc0-414b-9b3a-d0c28aaab87e" target="_blank" rel="noopener">Verify credential ↗</a>
+        </div>
+      </article>
+      <article class="cert">
+        <button type="button" data-full="img/cert-hubspot.jpg" data-alt="HubSpot Content Marketing certificate for Brady Scott" aria-label="View the HubSpot Content Marketing certificate full size">
+          <img src="img/cert-hubspot.jpg" alt="HubSpot Content Marketing Certified, awarded to Brady Scott" loading="lazy">
+        </button>
+        <div class="cert-info">
+          <h3>Content Marketing Certified</h3>
+          <p>HubSpot Academy · Oct 2026 – Nov 2028</p>
+          <a href="https://app-na2.hubspot.com/academy/achievements/1lmyql6x/en/1/brady-scott/content-marketing-certified" target="_blank" rel="noopener">Verify credential ↗</a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="block" id="about">
+    <div class="sec-head"><h2>About me</h2></div>
+    <div class="about">
+      <div class="col">
+        <p>I started college in finance and switched to marketing once I realized what I actually loved: branding, strategy, and figuring out what makes people care about something.</p>
+        <p>I'm most interested in product, brand, and entertainment marketing. I like work where the creative idea and the numbers both matter.</p>
+      </div>
+      <div class="col">
+        <p>I'm at my best working with a small team, taking a rough idea and turning it into something people respond to. I'm based in Tallahassee, I'm from the Tampa Bay area, and I'm open to relocating anywhere in the U.S.</p>
+        <p>I'm currently looking for a <strong>Summer 2027 marketing internship.</strong></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="skills">
+    <div class="sec-head"><h2>Skills &amp; tools</h2></div>
+    <div class="skills">
+      <div>
+        <h3>What I do</h3>
+        <div class="tags">
+          <span class="tag">Campaign development</span><span class="tag">Content creation</span><span class="tag">Video production</span><span class="tag">Brand messaging</span><span class="tag">Audience engagement</span><span class="tag">Survey research</span><span class="tag">Data analysis</span><span class="tag">Presentations</span>
+        </div>
+      </div>
+      <div>
+        <h3>Tools</h3>
+        <div class="tags">
+          <span class="tag">Google Analytics</span><span class="tag">HubSpot</span><span class="tag">Microsoft Excel</span><span class="tag">PowerPoint</span><span class="tag">Word</span><span class="tag">Canva</span><span class="tag">CapCut</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <h2>Let's talk.</h2>
+    <p>I'm looking for a Summer 2027 marketing internship and always happy to talk with people working in marketing.</p>
+    <div class="contact-row">
+      <span class="email" id="email">bps25a@fsu.edu</span>
+      <button class="btn solid" type="button" id="copy">Copy email</button>
+      <a class="btn ghost" href="https://www.linkedin.com/in/bradyscott-fsu" target="_blank" rel="noopener">LinkedIn ↗</a>
+    </div>
+  </section>
+
+  <footer>© 2026 Brady Scott · Tallahassee, FL</footer>
+</main>
+
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Image preview">
+  <button class="close" type="button" id="lb-close">Close</button>
+  <img id="lb-img" alt="">
+</div>
+
+<script>
+(function () {
+  var lb = document.getElementById('lb'), img = document.getElementById('lb-img'), last = null;
+  function open(btn) { last = btn; img.src = btn.getAttribute('data-full'); img.alt = btn.getAttribute('data-alt') || ''; lb.hidden = false; document.getElementById('lb-close').focus(); }
+  function close() { lb.hidden = true; img.removeAttribute('src'); if (last) last.focus(); }
+  document.querySelectorAll('[data-full]').forEach(function (b) { b.addEventListener('click', function () { open(b); }); });
+  document.getElementById('lb-close').addEventListener('click', close);
+  lb.addEventListener('click', function (e) { if (e.target === lb) close(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !lb.hidden) close(); });
+
+  var copy = document.getElementById('copy');
+  copy.addEventListener('click', function () {
+    var text = document.getElementById('email').textContent;
+    function selectIt() { var r = document.createRange(); r.selectNodeContents(document.getElementById('email')); var s = getSelection(); s.removeAllRanges(); s.addRange(r); copy.textContent = 'Press Ctrl+C to copy'; }
+    try {
+      navigator.clipboard.writeText(text).then(function () { copy.textContent = 'Copied'; setTimeout(function () { copy.textContent = 'Copy email'; }, 1800); }, selectIt);
+    } catch (e) { selectIt(); }
+  });
+})();
+</script>
+
+</body>
+</html>
